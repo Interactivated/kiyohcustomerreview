@@ -404,6 +404,7 @@ class KiyohCustomerReview extends Module
             $language_1 = $this->config['LANGUAGE1'];
             $first_name = $customer->firstname;
             $last_name = $customer->lastname;
+            
             $server = 'klantenvertellen.nl';
             if ($kiyoh_server == 'newkiyoh.com') {
                 $server = 'kiyoh.com';
