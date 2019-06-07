@@ -44,6 +44,7 @@ class KiyohCustomerReview extends Module
         'LOCATIONID' => ''
     );
 
+    /** @var $cache \Cache\Adapter\Filesystem\FilesystemCachePool */
     private $cache;
     private $cache_ttl = 300; //the number of seconds in which the cached value will expire
 
@@ -52,7 +53,7 @@ class KiyohCustomerReview extends Module
     {
         $this->name = 'kiyohcustomerreview';
         $this->tab = 'advertising_marketing';
-        $this->version = '1.3.2';
+        $this->version = '1.3.3';
         $this->author = 'Interactivated.me';
         $this->need_instance = 0;
         $this->module_key = '5f10179e3d17156a29ba692b6dd640da';
@@ -253,10 +254,13 @@ class KiyohCustomerReview extends Module
             $datajson = json_decode($output, true);
             $dataxml = new StdClass();
             $company = new StdClass();
-            $company->total_score = $datajson['averageRating'];
-            $company->url = $datajson['viewReviewUrl'];
-            $company->total_reviews = $datajson['numberReviews'];
-            $dataxml->company = $company;
+            if(isset($datajson['averageRating'])){
+                $company->total_score = $datajson['averageRating'];
+                $company->url = $datajson['viewReviewUrl'];
+                $company->total_reviews = $datajson['numberReviews'];
+                $dataxml->company = $company;
+            }
+
             $doc = $dataxml;
         } else {
             $doc = simplexml_load_string($output);
@@ -267,8 +271,8 @@ class KiyohCustomerReview extends Module
             $data = json_decode(json_encode($doc), true);
             $this->cache->set($key, $data, $this->cache_ttl);
         }
-        if (!isset($data['company']['total_score'])) {
-            $this->cache->forceClear($key);
+        if (!isset($data['company']['total_score']) && $this->cache) {
+            $this->cache->clear();
         }
 
         return $data;
@@ -479,7 +483,7 @@ class KiyohCustomerReview extends Module
 
     private function initCache()
     {
-        require_once 'vendor/autoload.php'; // Autoload here for the module definition
+        require_once dirname(__FILE__).'/vendor/autoload.php'; // Autoload here for the module definition
         $filesystemAdapter = new \League\Flysystem\Adapter\Local(_PS_CACHE_DIR_ . 'cachefs');
         $filesystem = new \League\Flysystem\Filesystem($filesystemAdapter);
 
