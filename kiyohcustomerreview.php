@@ -53,7 +53,7 @@ class KiyohCustomerReview extends Module
     {
         $this->name = 'kiyohcustomerreview';
         $this->tab = 'advertising_marketing';
-        $this->version = '1.3.3';
+        $this->version = '1.3.4';
         $this->author = 'Interactivated.me';
         $this->need_instance = 0;
         $this->module_key = '5f10179e3d17156a29ba692b6dd640da';
@@ -406,9 +406,9 @@ class KiyohCustomerReview extends Module
             $kiyoh_delay = $this->config['DELAY'];
             $location_id = $this->config['LOCATIONID'];
             $language_1 = $this->config['LANGUAGE1'];
-            $first_name = $customer->firstname;
-            $last_name = $customer->lastname;
-            
+            $first_name = urlencode($customer->firstname);
+            $last_name = urlencode($customer->lastname);
+
             $server = 'klantenvertellen.nl';
             if ($kiyoh_server == 'newkiyoh.com') {
                 $server = 'kiyoh.com';
