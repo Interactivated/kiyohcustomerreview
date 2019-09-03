@@ -53,7 +53,7 @@ class KiyohCustomerReview extends Module
     {
         $this->name = 'kiyohcustomerreview';
         $this->tab = 'advertising_marketing';
-        $this->version = '1.3.4';
+        $this->version = '1.3.5';
         $this->author = 'Interactivated.me';
         $this->need_instance = 0;
         $this->module_key = '5f10179e3d17156a29ba692b6dd640da';
@@ -241,6 +241,7 @@ class KiyohCustomerReview extends Module
         curl_setopt($ch, CURLOPT_URL, $file);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 2);
         if ($kiyoh_server == 'klantenvertellen.nl' || $kiyoh_server == 'newkiyoh.com') {
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                 'X-Publication-Api-Token: ' . $hash
