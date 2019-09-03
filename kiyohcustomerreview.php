@@ -255,7 +255,7 @@ class KiyohCustomerReview extends Module
             $datajson = json_decode($output, true);
             $dataxml = new StdClass();
             $company = new StdClass();
-            if(isset($datajson['averageRating'])){
+            if (isset($datajson['averageRating'])) {
                 $company->total_score = $datajson['averageRating'];
                 $company->url = $datajson['viewReviewUrl'];
                 $company->total_reviews = $datajson['numberReviews'];
