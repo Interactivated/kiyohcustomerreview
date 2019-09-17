@@ -53,7 +53,7 @@ class KiyohCustomerReview extends Module
     {
         $this->name = 'kiyohcustomerreview';
         $this->tab = 'advertising_marketing';
-        $this->version = '1.3.6';
+        $this->version = '1.3.7';
         $this->author = 'Interactivated.me';
         $this->need_instance = 0;
         $this->module_key = '5f10179e3d17156a29ba692b6dd640da';
@@ -241,7 +241,7 @@ class KiyohCustomerReview extends Module
         curl_setopt($ch, CURLOPT_URL, $file);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_TIMEOUT_MS, 200);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 1);
         if ($kiyoh_server == 'klantenvertellen.nl' || $kiyoh_server == 'newkiyoh.com') {
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                 'X-Publication-Api-Token: ' . $hash
@@ -430,8 +430,8 @@ class KiyohCustomerReview extends Module
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HEADER, false);
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_setopt($curl, CURLOPT_TIMEOUT_MS, 200);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 1);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 1);
         // grab URL and pass it to the browser
         $response = curl_exec($curl);
         $err = curl_errno($curl);
