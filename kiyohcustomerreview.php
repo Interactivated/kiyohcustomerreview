@@ -53,7 +53,7 @@ class KiyohCustomerReview extends Module
     {
         $this->name = 'kiyohcustomerreview';
         $this->tab = 'advertising_marketing';
-        $this->version = '1.3.7';
+        $this->version = '1.3.8';
         $this->author = 'Interactivated.me';
         $this->need_instance = 0;
         $this->module_key = '5f10179e3d17156a29ba692b6dd640da';
@@ -395,13 +395,21 @@ class KiyohCustomerReview extends Module
             $language = $this->config['LANGUAGE'];
             $kiyoh_action = 'sendInvitation';
             $lang_str = '';
-            if ($kiyoh_server == 'kiyoh.com') {
-                $lang_str = '&language=' . $language;
-            }
+
             if (!$email || !$kiyoh_server || !$kiyoh_user || !$kiyoh_connector) {
                 return false;
             }
-            $url = 'https://www.' . $kiyoh_server . '/set.php?user=' . $kiyoh_user . '&connector=' . $kiyoh_connector . '&action=' . $kiyoh_action . '&targetMail=' . $email . '&delay=' . $kiyoh_delay . $lang_str;
+            $vars = [
+                'user' => $kiyoh_user,
+                'connector' => $kiyoh_connector,
+                'action' => $kiyoh_action,
+                'targetMail' => $email,
+                'delay' => $kiyoh_delay,
+            ];
+            if ($kiyoh_server == 'kiyoh.com') {
+                $vars['language'] = $language;
+            }
+            $url = 'https://www.' . $kiyoh_server . '/set.php?' . http_build_query($vars);
         } else {
             $hash = $this->config['HASH'];
             $kiyoh_delay = $this->config['DELAY'];
@@ -414,14 +422,16 @@ class KiyohCustomerReview extends Module
             if ($kiyoh_server == 'newkiyoh.com') {
                 $server = 'kiyoh.com';
             }
-            $url = "https://{$server}/v1/invite/external?" .
-                "hash={$hash}" .
-                "&location_id={$location_id}" .
-                "&invite_email={$email}" .
-                "&delay={$kiyoh_delay}" .
-                "&first_name={$first_name}" .
-                "&last_name={$last_name}" .
-                "&language={$language_1}";
+            $vars = [
+                'hash' => $hash,
+                'location_id' => $location_id,
+                'invite_email' => $email,
+                'delay' => $kiyoh_delay,
+                'first_name' => $first_name,
+                'last_name' => $last_name,
+                'language' => $language_1
+            ];
+            $url = "https://{$server}/v1/invite/external?" . http_build_query($vars);
         }
         // create a new cURL resource
         $curl = curl_init();
