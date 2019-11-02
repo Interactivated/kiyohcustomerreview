@@ -53,7 +53,7 @@ class KiyohCustomerReview extends Module
     {
         $this->name = 'kiyohcustomerreview';
         $this->tab = 'advertising_marketing';
-        $this->version = '1.3.8';
+        $this->version = '1.3.9';
         $this->author = 'Interactivated.me';
         $this->need_instance = 0;
         $this->module_key = '5f10179e3d17156a29ba692b6dd640da';
@@ -228,7 +228,7 @@ class KiyohCustomerReview extends Module
             }
             $location_id = $this->config['LOCATIONID'];
             $hash = $this->config['HASH'];
-            $file = "https://{$server}/v1/publication/review/external?locationId=" . $location_id;
+            $file = "https://{$server}/v1/publication/review/external/location/statistics?locationId=" . $location_id;
         } else {
             $file = 'https://www.' . $kiyoh_server . '/xml/recent_company_reviews.xml?connectorcode=' . $connector . '&company_id=' . $company_id;
         }
