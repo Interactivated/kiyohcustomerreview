@@ -17,7 +17,8 @@
     <div class="rating-box">
         <div class="rating" style="width:{$rating_percentage|escape:'htmlall':'UTF-8'}%"></div>
     </div>
-    <div class="kiyoh-schema" itemscope="itemscope" itemtype="http://schema.org/WebPage">
+    <div class="kiyoh-schema" itemscope="itemscope" itemtype="http://schema.org/Organization">
+        <meta itemprop="name" content="{$storename|escape:'htmlall':'UTF-8'}">
         <div itemprop="aggregateRating" itemscope="itemscope" itemtype="http://schema.org/AggregateRating">
             <meta itemprop="bestRating" content="{$maxrating|escape:'htmlall':'UTF-8'}">
             <p>

@@ -53,7 +53,7 @@ class KiyohCustomerReview extends Module
     {
         $this->name = 'kiyohcustomerreview';
         $this->tab = 'advertising_marketing';
-        $this->version = '1.3.9';
+        $this->version = '1.3.10';
         $this->author = 'Interactivated.me';
         $this->need_instance = 0;
         $this->module_key = '5f10179e3d17156a29ba692b6dd640da';
@@ -199,6 +199,7 @@ class KiyohCustomerReview extends Module
                     $show_rating = 'display:block;';
                 }
                 $this->smarty->assign(array(
+                    'storename' => Configuration::get('PS_SHOP_NAME'),
                     'rating' => $rating,
                     'rating_percentage' => $rating * 10,
                     'maxrating' => $maxrating,
