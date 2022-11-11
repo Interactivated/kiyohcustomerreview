@@ -53,7 +53,7 @@ class KiyohCustomerReview extends Module
     {
         $this->name = 'kiyohcustomerreview';
         $this->tab = 'advertising_marketing';
-        $this->version = '1.3.11';
+        $this->version = '1.3.12';
         $this->author = 'Interactivated.me';
         $this->need_instance = 0;
         $this->module_key = '5f10179e3d17156a29ba692b6dd640da';
@@ -78,14 +78,6 @@ class KiyohCustomerReview extends Module
         if (isset($this->config['WARNING']) && $this->config['WARNING']) {
             $this->warning = $this->config['WARNING'];
         }
-        if (_PS_VERSION_ < '1.5' && _PS_VERSION_ > '1.3') {
-            require(_PS_MODULE_DIR_ . $this->name . '/backward_compatibility/backward.php');
-        }
-        if (_PS_VERSION_ < '1.4' && !class_exists('Context', false)) {
-            require(_PS_MODULE_DIR_ . $this->name . '/backward_compatibility/Context.php');
-            $this->context = Context::getContext();
-        }
-
         $this->initCache();
     }
 
