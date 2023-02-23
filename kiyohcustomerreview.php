@@ -13,7 +13,6 @@
  * @copyright 2014 Interactivated.me
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -29,7 +28,7 @@ class KiyohCustomerReview extends Module
     private $option = '';
     protected $price = 0;
     private $id_country = '';
-    private $config = array(
+    private $config = [
         'CONNECTOR' => '',
         'COMPANY_EMAIL' => '',
         'COMPANY_ID' => '',
@@ -41,19 +40,18 @@ class KiyohCustomerReview extends Module
         'SHOW_RATING' => '0',
         'LANGUAGE1' => 'nl',
         'HASH' => '',
-        'LOCATIONID' => ''
-    );
+        'LOCATIONID' => '',
+    ];
 
-    /** @var $cache \Cache\Adapter\Filesystem\FilesystemCachePool */
+    /** @var \Cache\Adapter\Filesystem\FilesystemCachePool */
     private $cache;
-    private $cache_ttl = 300; //the number of seconds in which the cached value will expire
-
+    private $cache_ttl = 300; // the number of seconds in which the cached value will expire
 
     public function __construct()
     {
         $this->name = 'kiyohcustomerreview';
         $this->tab = 'advertising_marketing';
-        $this->version = '1.3.12';
+        $this->version = '1.3.13';
         $this->author = 'Interactivated.me';
         $this->need_instance = 0;
         $this->module_key = '5f10179e3d17156a29ba692b6dd640da';
@@ -64,10 +62,10 @@ class KiyohCustomerReview extends Module
 
         $this->displayName = $this->l('KiyOh Customer Review');
         $this->description = $this->l('KiyOh.nl users can use this plug-in automatically collect customer reviews');
-        $this->ps_versions_compliancy = array('min' => '1.4.0.0', 'max' => '1.7.99.99');
+        $this->ps_versions_compliancy = ['min' => '1.4.0.0', 'max' => _PS_VERSION_];
         $configs = unserialize(Configuration::get('KIYOH_SETTINGS'));
         if (!is_array($configs)) {
-            $configs = array();
+            $configs = [];
         }
         $this->config = array_merge($this->config, $configs);
 
@@ -83,7 +81,7 @@ class KiyohCustomerReview extends Module
 
     private function getPsVersion()
     {
-        return $this->psv = (float)Tools::substr(_PS_VERSION_, 0, 3);
+        return $this->psv = (float) Tools::substr(_PS_VERSION_, 0, 3);
     }
 
     public function install()
@@ -102,6 +100,7 @@ class KiyohCustomerReview extends Module
         }
         if (!in_array('curl', get_loaded_extensions())) {
             $this->_errors[] = $this->l('Unable to install the module (php5-curl required).');
+
             return false;
         }
 
@@ -125,20 +124,20 @@ class KiyohCustomerReview extends Module
             return false;
         }
         Configuration::deleteByName('KIYOH_SETTINGS');
-        return (Db::getInstance()->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'kiyohcustomerreview`'));
+
+        return Db::getInstance()->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'kiyohcustomerreview`');
     }
 
     public function hookDisplayHeader($params)
     {
-        $this->context->controller->addCSS(($this->_path) . 'views/css/rating.css', 'all');
+        $this->context->controller->addCSS($this->_path . 'views/css/rating.css', 'all');
     }
-
 
     public function getContent()
     {
         $output = '<h2>' . $this->l('Kiyoh Customer Review') . '</h2>';
         if (Tools::isSubmit('submitKiyoh')) {
-            $this->config = array(
+            $this->config = [
                 'CONNECTOR' => Tools::getValue('connector'),
                 'COMPANY_EMAIL' => Tools::getValue('company_email'),
                 'COMPANY_ID' => Tools::getValue('company_id'),
@@ -152,7 +151,7 @@ class KiyohCustomerReview extends Module
                 'LANGUAGE1' => Tools::getValue('language1'),
                 'HASH' => Tools::getValue('hash'),
                 'LOCATIONID' => Tools::getValue('locationid'),
-            );
+            ];
             Configuration::updateValue('KIYOH_SETTINGS', serialize($this->config));
 
             $output .= '
@@ -190,20 +189,22 @@ class KiyohCustomerReview extends Module
                 if ($this->config['SHOW_RATING'] == '1') {
                     $show_rating = 'display:block;';
                 }
-                $this->smarty->assign(array(
+                $this->smarty->assign([
                     'storename' => Configuration::get('PS_SHOP_NAME'),
                     'rating' => $rating,
                     'rating_percentage' => $rating * 10,
                     'maxrating' => $maxrating,
                     'url' => $url,
                     'reviews' => $reviews,
-                    'show_rating' => $show_rating
-                ));
+                    'show_rating' => $show_rating,
+                ]);
+
                 return $this->display(__FILE__, $tpl . '.tpl', $this->getCacheId());
             } else {
                 return '';
             }
         }
+
         return $this->display(__FILE__, $tpl . '.tpl', $this->getCacheId());
     }
 
@@ -236,9 +237,9 @@ class KiyohCustomerReview extends Module
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_TIMEOUT, 1);
         if ($kiyoh_server == 'klantenvertellen.nl' || $kiyoh_server == 'newkiyoh.com') {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                'X-Publication-Api-Token: ' . $hash
-            ));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'X-Publication-Api-Token: ' . $hash,
+            ]);
         }
         $output = curl_exec($ch);
         curl_close($ch);
@@ -246,8 +247,8 @@ class KiyohCustomerReview extends Module
         $doc = '';
         if ($kiyoh_server == 'klantenvertellen.nl' || $kiyoh_server == 'newkiyoh.com') {
             $datajson = json_decode($output, true);
-            $dataxml = new StdClass();
-            $company = new StdClass();
+            $dataxml = new \stdClass();
+            $company = new \stdClass();
             if (isset($datajson['averageRating'])) {
                 $company->total_score = $datajson['averageRating'];
                 $company->url = $datajson['viewReviewUrl'];
@@ -260,7 +261,7 @@ class KiyohCustomerReview extends Module
             $doc = simplexml_load_string($output);
         }
 
-        $data = array();
+        $data = [];
         if ($doc && $this->cache) {
             $data = json_decode(json_encode($doc), true);
             $this->cache->set($key, $data, $this->cache_ttl);
@@ -276,11 +277,11 @@ class KiyohCustomerReview extends Module
     {
         $id_lang = $this->context->language->id;
         $states = OrderState::getOrderStates($id_lang);
-        $order_statuses = array();
+        $order_statuses = [];
         foreach ($states as $state) {
             $order_statuses[$state['id_order_state']] = $state['name'];
         }
-        $this->smarty->assign(array(
+        $this->smarty->assign([
             'current_url' => $this->context->link->getAdminLink('AdminModules') . '&configure=kiyohcustomerreview&tab_module=advertising_marketing&module_name=kiyohcustomerreview',
             'request_uri' => Tools::safeOutput($_SERVER['REQUEST_URI']),
             'version' => $this->version,
@@ -289,17 +290,17 @@ class KiyohCustomerReview extends Module
             'company_id' => Tools::safeOutput(Tools::getValue('company_id', $this->config['COMPANY_ID'])),
             'delay' => Tools::safeOutput(Tools::getValue('delay', $this->config['DELAY'])),
             'show_rating' => Tools::safeOutput(Tools::getValue('show_rating', $this->config['SHOW_RATING'])),
-            'show_rating_aval' => array('0' => $this->l('Hide'), '1' => $this->l('Show')),
+            'show_rating_aval' => ['0' => $this->l('Hide'), '1' => $this->l('Show')],
             'allorder_statuses' => $order_statuses,
             'order_status' => Tools::getValue('order_status', $this->config['ORDER_STATUS']),
-            'servers' => array(
+            'servers' => [
                 'klantenvertellen.nl' => $this->l('New Klantenvertellen.nl'),
                 'newkiyoh.com' => $this->l('New Kiyoh.com'),
                 'kiyoh.nl' => $this->l('Old Kiyoh.nl'),
                 'kiyoh.com' => $this->l('Old Kiyoh.com'),
-            ),
+            ],
             'server' => Tools::getValue('server', $this->config['SERVER']),
-            'langs' => array(
+            'langs' => [
                 '' => '',
                 '1' => $this->l('Dutch (BE)'),
                 '2' => $this->l('French'),
@@ -329,31 +330,29 @@ class KiyohCustomerReview extends Module
                 '29' => $this->l('Estonian'),
                 '31' => $this->l('Lithuanian'),
                 '33' => $this->l('Latvian'),
-                '35' => $this->l('Slovak')
-            ),
+                '35' => $this->l('Slovak'),
+            ],
             'language' => Tools::getValue('language', $this->config['LANGUAGE']),
             'language1' => Tools::getValue('language1', $this->config['LANGUAGE1']),
             'hash' => Tools::getValue('hash', $this->config['HASH']),
             'locationid' => Tools::getValue('locationid', $this->config['LOCATIONID']),
-        ));
+        ]);
         $output = $this->display(__FILE__, 'adminsettings.tpl');
+
         return $output;
     }
 
     public function hookActionOrderStatusUpdate($params)
     {
-        //$event = $this->config['KIYOH_EVENT'];
         $dispatched_order_statuses = $this->config['ORDER_STATUS'];
         $object = $params['newOrderStatus'];
         $new_order_status = $object->id;
         if (!is_array($dispatched_order_statuses)) {
-            $dispatched_order_statuses = array();
+            $dispatched_order_statuses = [];
         }
-        //if ($event === 'order_status_change'){
         if (in_array($new_order_status, $dispatched_order_statuses)) {
             $this->sendRequest($params['id_order']);
         }
-        //}
     }
 
     public function hookUpdateOrderStatus($params)
@@ -363,7 +362,7 @@ class KiyohCustomerReview extends Module
 
     protected function sendRequest($order_id)
     {
-        $order = new Order((int)$order_id);
+        $order = new Order((int) $order_id);
         $firstname = '';
         $lastname = '';
         if ($this->psv >= 1.5) {
@@ -378,7 +377,7 @@ class KiyohCustomerReview extends Module
             $id_shop = $order->id_shop;
         }
         if ($this->isInvitationSent($customer->id, $id_shop)) {
-            return false;//invitation was already send
+            return false; // invitation was already send
         }
         $kiyoh_server = $this->config['SERVER'];
         if ($kiyoh_server == 'kiyoh.com' || $kiyoh_server == 'kiyoh.nl') {
@@ -422,7 +421,7 @@ class KiyohCustomerReview extends Module
                 'delay' => $kiyoh_delay,
                 'first_name' => $first_name,
                 'last_name' => $last_name,
-                'language' => $language_1
+                'language' => $language_1,
             ];
             $url = "https://{$server}/v1/invite/external?" . http_build_query($vars);
         }
@@ -458,17 +457,19 @@ class KiyohCustomerReview extends Module
             $result = false;
         }
         curl_close($curl);
+
         return $result;
     }
 
     protected function isInvitationSent($customer_id, $id_shop)
     {
         $sql = 'SELECT status FROM `' . _DB_PREFIX_ . 'kiyohcustomerreview`
-                            WHERE `id_customer` = ' . (int)$customer_id . ' AND `id_shop` = ' . (int)$id_shop;
+                            WHERE `id_customer` = ' . (int) $customer_id . ' AND `id_shop` = ' . (int) $id_shop;
         $result = Db::getInstance()->executeS($sql);
         if (count($result)) {
             return true;
         }
+
         return false;
     }
 
@@ -476,7 +477,7 @@ class KiyohCustomerReview extends Module
     {
         $sql = 'INSERT INTO `' . _DB_PREFIX_ . 'kiyohcustomerreview`
                             (`id_customer`, `status`, `id_shop`, `date_add`)
-			VALUES(' . (int)$customer_id . ', \'sent\', ' . (int)$id_shop . ', NOW())';
+			VALUES(' . (int) $customer_id . ', \'sent\', ' . (int) $id_shop . ', NOW())';
         Db::getInstance()->executeS($sql);
     }
 
@@ -487,7 +488,7 @@ class KiyohCustomerReview extends Module
 
     private function initCache()
     {
-        require_once dirname(__FILE__).'/vendor/autoload.php'; // Autoload here for the module definition
+        require_once dirname(__FILE__) . '/vendor/autoload.php'; // Autoload here for the module definition
         $filesystemAdapter = new \League\Flysystem\Adapter\Local(_PS_CACHE_DIR_ . 'cachefs');
         $filesystem = new \League\Flysystem\Filesystem($filesystemAdapter);
 
